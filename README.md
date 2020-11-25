@@ -1,0 +1,2 @@
+# FastFingers
+Typing practice software
