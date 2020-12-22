@@ -1,0 +1,18 @@
+import java.lang.*;
+class hello{
+    public static void main(String args[]){
+	   int a,b,c;
+	   subhello h=new subhello();
+           a=10;
+	   b=15;
+	   c=a+b;
+           System.out.println("hello world this is sai.The developerr!");
+           System.out.println("sum of "+a+" and "+b+" is "+c);
+           h.helloprint();
+}
+}
+class subhello{
+    void helloprint(){
+         System.out.println("hello to everyone.this is my new program of another class");
+	}
+}

@@ -1,0 +1,15 @@
+import java.io.*;
+class bufferreader{
+	public static void main(String[] args) throws IOException
+	{
+		BufferedReader b=new BufferedReader(new InputStreamReader(System.in));
+		//BufferedReader b=new BufferedReader(System.in); error
+		System.out.println("Enter your name");
+		String s=b.readLine();
+		System.out.println("Enter your roll");
+		int r=Integer.parseInt(b.readLine());
+		System.out.println("Enter your section");
+		String sec=b.readLine();
+		System.out.println(s+" "+r+" "+sec);
+	}
+}

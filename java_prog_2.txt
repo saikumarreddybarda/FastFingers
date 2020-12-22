@@ -1,0 +1,29 @@
+import java.lang.*;
+class constructer{
+      double a=4;
+	double b=9.5;
+      constructer(int a,int b,int c)
+	{
+	int d;
+	d=a*b*c;
+        System.out.println("multiplication of three numbers is "+d);
+	}
+	void add(int a,int b,int c){
+	System.out.println("addition of three numbers is "+(a+b+c));
+	}
+	double funvarsub(){
+	double c;
+	c=b-a;
+	return c;
+	}
+
+}
+class constructerex{
+    public static void main(String args[]){
+		constructer obj=new constructer(1,2,3);
+		obj.add(10,20,30);
+		double k=obj.funvarsub();
+		System.out.println("function varibles sub is "+k);
+         
+		}
+}
