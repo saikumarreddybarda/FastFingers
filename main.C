@@ -5,22 +5,18 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-#include <graphics.h>
 
-#define TESTMODE '1'
-#define TRAINMODE '2'
-#define QUIT '3'
 #define ESC '\x1b'
 #define Y 'y'
 #define N 'n'
 struct usercmp{
    char str[20];
    float avg;
+   int level;
 } p[10];
-void MainInitial () ;
-void Body () ;
 void MainProcess () ;
 void RegisterProcess();
+void Design();
 void NewUser();
 void OldUser();
 void ProgText();
@@ -44,7 +40,8 @@ void NewLine (int * , int *) ;
 void CheckIfTyped(int * , int *) ;
 void Report (int * , int *) ;
 void CalPrac();
-void Basics();
+void Basics_letters();
+void Basics_words();
 void TrainMode () ;
 void TrainInitial () ;
 void TrainInitial_cal() ;
@@ -65,11 +62,11 @@ void EndTrainWordMode () ;
 void TrainOutputWord (int * , int *) ;
 void TrainCheckIfTyped (int * , int *) ;
 void TrainReport (int * , int *) ;
+void userfinaldetails(float ,char *);
 void Game();
 void LeaderBoard();
 void QuitConfirm () ;
 void EndBody () ;
-void EndProgram () ;
 enum Boolean { FALSE , TRUE } ;
 enum Boolean 	ExitProgram , ExitTestProcess , ExitTrainProcess , ExitTrainUserInput
 	      ,	MiddleRow , UpperRow , LowerRow , NumberRow,CalRow
@@ -77,7 +74,7 @@ enum Boolean 	ExitProgram , ExitTestProcess , ExitTrainProcess , ExitTrainUserIn
 	      , EndOfWord ;
 
 int FileLength ;
-char RequiredLetter,USERNAME[100], fname[10]=".txt";
+char RequiredLetter,USERNAME[100],USERLEVEL[5], fname[10]=".txt";
 float TimeUsed,Accr,Wpm;
 char MiddleRowLetters [9] = {'a','s','d','f','g','h','j','k','l'} ;
 char UpperRowLetters [10] = {'q','w','e','r','t','y','u','i','o','p'} ;
@@ -90,30 +87,18 @@ clock_t TimeStart , TimeStop ;
 
 void main()
 {
-	//randomize () ;   //to make the random number generated more randomly
 
-	MainInitial () ;
-
-	Body () ;
-
-	EndProgram () ;
-}
-
-void MainInitial ()
-{
 	ExitProgram = FALSE ;
-}
 
-void Body ()
-{
-    RegisterProcess();
+	 RegisterProcess();
 
 	do
 	{
 	       MainProcess () ;
 
-	} while (ExitProgram == FALSE) ;  //Once ExitProgram is True,
+	} while (ExitProgram == FALSE) ;
 }
+
 
 void RegisterProcess(){
 	int Count ;
@@ -181,7 +166,7 @@ printf("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 void NewUser(){
     char name[100];
     	int Count ;
-    	 char ch,tempstr[20][100],temp[50];
+    	 char ch,tempstr[20][100],temp[50],one[5]="1\n";
 	 int k=12,i=0,m=0;
     	FILE *ptr,*uptr;
     	textcolor(WHITE);	//change the text and background colour
@@ -263,6 +248,8 @@ void NewUser(){
        }
     strcat(name,fname);
     uptr=fopen(name,"w");
+    fprintf(uptr,"%s",one);
+    strcpy(USERLEVEL,one);
     fclose(uptr);
 	}
 	else{
@@ -276,12 +263,13 @@ void NewUser(){
         getch();
             NewUser();
 	}
+	textbackground(YELLOW);
 }
 void OldUser(){
    char name[100];
     	int Count ;
     	FILE *ptr;
-    	 char ch,tempstr[20][100],temp[50];
+    	 char ch,tempstr[20][100],temp[50],level[5];
 	 int k=12,i=0,m=0;
 	  	textcolor(WHITE);	//change the text and background colour
 	textbackground(RED);
@@ -343,7 +331,6 @@ void OldUser(){
        }
 	gotoxy (35 , k+1) ;
 	scanf("%[^\n]%*c", name);
-	strcpy(USERNAME,name);
 	i=0;
 	while(i<=m){
         if(strcmp(name,tempstr[i])==0){
@@ -361,20 +348,28 @@ void OldUser(){
        printf("press any key to continue..");
         getch();
             OldUser();
+            return;
 	}
+	strcpy(USERNAME,name);
+    strcat(name,fname);
+    ptr=fopen(name,"r");
+    fgets(level,sizeof(level),ptr);
+    strcpy(USERLEVEL,level);
+    fclose(ptr);
 	gotoxy (30 , 25) ;
        printf("press any key to continue..");
         getch();
 }
-void MainProcess ()
-{
-	int Count ;
-	char MenuChoice ;
+void Design(){
+    	int Count ;
 clrscr () ;
 textcolor(WHITE);	//change the text and background colour
 	textbackground(YELLOW);
     gotoxy (10 , 2) ;
 printf("************************FAST FINGERS*************************");
+gotoxy (10 , 23) ;
+printf("YOUR CURRENT LEVEL:%s",USERLEVEL);
+
 	gotoxy (20 , 3) ;	//display the frame
 	printf ("\xc9") ;
 		for (Count = 1 ; Count <= 45 ; Count++ )
@@ -400,27 +395,138 @@ printf("************************FAST FINGERS*************************");
 			gotoxy (65 , 2 + Count) ;
 			printf ("\xba") ;
 		}
-		gotoxy(23,4);
+}
+void MainProcess ()
+{
+
+	char MenuChoice ;
+	char one[5]="1\n",two[5]="2\n",three[5]="3\n";
+        Design();
+		 if(strcmp(USERLEVEL,one)==0){
+                gotoxy(23,4);
 		printf("hi,%s lets start practicing!",USERNAME);
-		 gotoxy (23,5) ;
-		 printf("We strongly recommend you to practice on");
+        gotoxy(23,5);
+        printf("here are basics you should practice");
 		 gotoxy (23,6) ;
-		 printf("Basics Before going to another modules");
-//Display the menu
-	gotoxy (35 , 10) ;
-	printf ("1.BASICS PRACTICE") ;
-	gotoxy (35 , 11) ;
-	printf ("2.PROGRAMMING TEXT") ;
-	gotoxy (35 , 12) ;
-	printf ("3.CALCULATOR PRACTICE") ;
-	gotoxy (35 , 13) ;
-	printf ("4.FAVORITE TEXT") ;
+		 printf("Your level increases accordingly");
+            gotoxy (35 , 12) ;
+	printf ("1.BASICS WITH LETTERS") ;
+	 gotoxy (35 , 13) ;
+	printf ("2.BASICS WITH WORDS") ;
 	gotoxy (35 , 14) ;
-	printf ("5.GAME") ;
+	printf ("3.LEADER BOARD") ;
 	gotoxy (35 , 15) ;
-	printf ("6.LEADER BOARD") ;
+	printf ("4. Quit Now") ;
 	gotoxy (35 , 16) ;
-	printf ("7. Quit Now") ;
+	printf ("Enter your Choice? : \n") ;
+	gotoxy (30 , 25) ;
+	printf ("Press ESC to quit.") ;
+	gotoxy (52 , 18) ;
+	MenuChoice = getch () ;           //Accept a key value from the user
+
+	switch (MenuChoice)
+	{
+        case '1' :
+
+            Basics_letters() ;
+			break ;
+        case '2' :
+
+            Basics_words() ;
+            strcpy(USERLEVEL,two);
+
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
+			break ;
+        case '3' :
+            LeaderBoard() ;
+			break ;
+		case '4' :	case ESC :	//if the user press ESC or 3
+
+			QuitConfirm () ;	//Call QuitConfirm ()
+	}
+		 }
+    if(strcmp(USERLEVEL,two)==0){
+        Design();
+        gotoxy (23,5) ;
+             printf("HURRAY! you have entered into next level");
+		 gotoxy (23,6) ;
+		 printf("You are doing good! Here we included");
+		  gotoxy (23,7) ;
+		  printf("Another module to practice more!");
+        gotoxy (35 , 12) ;
+	printf ("1.BASICS WITH LETTERS") ;
+	 gotoxy (35 , 13) ;
+	printf ("2.BASICS WITH WORDS") ;
+	gotoxy (35 , 14) ;
+	printf ("3.CALCULATOR PRACTICE") ;
+	gotoxy (35 , 15) ;
+	printf ("4.GAME") ;
+	gotoxy (35 , 16) ;
+	printf ("5.LEADER BOARD") ;
+	gotoxy (35 , 17) ;
+	printf ("6. Quit Now") ;
+	gotoxy (35 , 18) ;
+	printf ("Enter your Choice? : \n") ;
+	gotoxy (30 , 25) ;
+	printf ("Press ESC to quit.") ;
+	gotoxy (52 , 19) ;
+	MenuChoice = getch () ;           //Accept a key value from the user
+
+	switch (MenuChoice)
+	{
+        case '1' :
+
+            Basics_letters() ;
+			break ;
+        case '2' :
+
+            Basics_words() ;
+			break ;
+        case '3' :
+
+            CalPrac();
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
+			break ;
+        case '4' :
+            Game() ;
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
+			break ;
+        case '5' :
+            LeaderBoard() ;
+			break ;
+		case '6' :	case ESC :
+
+			QuitConfirm () ;
+	}
+		 }
+     if(strcmp(USERLEVEL,three)==0){
+             Design();
+              gotoxy (23,5) ;
+             printf("You are in the final level");
+		 gotoxy (23,6) ;
+		 printf("Now you can enjoy the practicing");
+     gotoxy (23,7) ;
+		 printf("if your are programmer we recommend");
+		 gotoxy (23,8) ;
+		 printf("to practice the programming languages");
+        gotoxy (35 , 9) ;
+	printf ("1.BASICS WITH LETTERS") ;
+	 gotoxy (35 , 10) ;
+	printf ("2.BASICS WITH WORDS") ;
+	 gotoxy (35 , 11) ;
+	printf ("3.CALCULATOR PRACTICE") ;
+	gotoxy (34 , 12) ;
+	printf("*4.PROGRAMMING TEXT *");
+	gotoxy (35 , 13) ;
+	printf("5.GAME");
+	gotoxy (35 , 14) ;
+	printf("6.FAVOURITE TEXT");
+	gotoxy (35 , 15) ;
+	printf ("7.LEADER BOARD") ;
+	gotoxy (35 ,16) ;
+	printf ("8. Quit Now") ;
 	gotoxy (35 , 17) ;
 	printf ("Enter your Choice? : \n") ;
 	gotoxy (30 , 25) ;
@@ -430,34 +536,44 @@ printf("************************FAST FINGERS*************************");
 
 	switch (MenuChoice)
 	{
-		case '2' :
-            ProgText();
+       case '1' :
+
+            Basics_letters() ;
 			break ;
+        case '2' :
 
-		case '4' :
-
-            FavText() ;
+            Basics_words() ;
 			break ;
         case '3' :
-
             CalPrac() ;
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
 			break ;
-        case '1' :
-
-            Basics() ;
-			break ;
-        case '6' :
-            LeaderBoard() ;
+        case '4' :
+            ProgText() ;
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
 			break ;
         case '5' :
             Game() ;
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
 			break ;
-		case '7' :	case ESC :	//if the user press ESC or 3
+        case '6' :
+            FavText() ;
+            strcpy(USERLEVEL,three);
+            userfinaldetails((Wpm+Accr)/2,USERLEVEL);
+			break ;
+        case '7' :
+            LeaderBoard() ;
+			break ;
+		case '8' :	case ESC :
 
-			QuitConfirm () ;	//Call QuitConfirm ()
-	}					//function to confirm if the
-}						//user want to quit or
-					//selected it by mistake
+			QuitConfirm () ;
+	}
+		 }
+
+}
 void  ProgText(){
     char MenuChoice;
     clrscr () ;
@@ -490,14 +606,14 @@ void  ProgText(){
 		case '2':	 //if the user press 2
 			python() ;
 			break ;
-        case '3':	 //if the user press 2
+        case '3':	 //if the user press 3
 			java() ;
 			break ;
 
-		case '4' :	case ESC :	//if the user press ESC or 3
+		case '4' :	case ESC :	//if the user press ESC or 4
                 break;
-			 	//Call QuitConfirm ()
-	}					//function to confirm if the
+
+	}
 }
 void Cprog(){
      FILE *FilePointer;
@@ -507,7 +623,7 @@ void Cprog(){
     printf("press 1, 2 or 3");
 	ch=getch();
 	if(ch=='1'||ch=='2'||ch=='3'){
-	switch (ch)    //select a random file
+	switch (ch)
 	{
 		case '1' :
 			FilePointer = fopen ("c_prog_1.txt" , "r") ;
@@ -540,7 +656,7 @@ void python(){
     printf("press 1, 2 or 3");
 	ch=getch();
 	if(ch=='1'||ch=='2'||ch=='3'){
-	switch (ch)    //select a random file
+	switch (ch)
 	{
 		case '1' :
 			FilePointer = fopen ("python_1.txt" , "r") ;
@@ -572,7 +688,7 @@ void java(){
     printf("press 1, 2 or 3");
 	ch=getch();
 	if(ch=='1'||ch=='2'||ch=='3'){
-	switch (ch)    //select a random file
+	switch (ch)
 	{
 		case '1' :
 			FilePointer = fopen ("java_prog_1.txt" , "r") ;
@@ -597,10 +713,37 @@ void java(){
 }
 void FavText(){
       char MenuChoice;
-        textcolor(WHITE);	//change the text and background colour
-	textbackground(BLUE);
-
-	clrscr () ;
+      int Count;
+        textcolor(BLACK);	//change the text and background colour
+	textbackground(WHITE);
+	clrscr();
+        	gotoxy (30 , 9) ;	//display the frame
+	printf ("\xc9") ;
+		for (Count = 1 ; Count <= 25 ; Count++ )
+		{
+			printf ("\xcd") ;
+		}
+	gotoxy (56 , 9) ;
+		for (Count = 1 ; Count <= 6 ; Count++ )
+		{
+			gotoxy (30 , 9 + Count) ;
+			printf ("\xba") ;
+		}
+	gotoxy (56 , 9) ;
+	printf ("\xbb") ;
+	gotoxy (30 , 15) ;
+	printf ("\xc8") ;
+		for (Count = 1 ; Count <= 26 ; Count++ )
+		{
+			printf ("\xcd") ;
+		}
+	gotoxy (56 , 15) ;
+	printf ("\xbc") ;
+		for (Count = 1 ; Count <= 5 ; Count++ )
+		{
+			gotoxy (56 , 9 + Count) ;
+			printf ("\xba") ;
+		}
 	gotoxy (35 , 10) ;
     printf ("1.Movies") ;
 	gotoxy (35 , 11) ;
@@ -669,8 +812,9 @@ void Movies(){
 
 }
 void Politics(){
-         FILE *FilePointer;
-  char ch;
+        FILE *FilePointer;
+     int RandomFile ;
+	 char ch;
      clrscr();
      gotoxy(30,9);
     printf("press 1, 2 or 3");
@@ -679,15 +823,15 @@ void Politics(){
 	switch (ch)    //select a random file
 	{
 		case '1' :
-			FilePointer = fopen ("politics_1.txt" , "r") ;
+			FilePointer = fopen ("poli_1.txt" , "r") ;
 			TestMode(FilePointer);
 			break ;
 		case '2' :
-			FilePointer = fopen ("politics_2.txt" , "r") ;
+			FilePointer = fopen ("poli_2.txt" , "r") ;
 			TestMode(FilePointer);
 			break ;
 		case '3' :
-			FilePointer = fopen ("politics_3.txt" , "r") ;
+			FilePointer = fopen ("poli_3.txt" , "r") ;
 			TestMode(FilePointer);
 			break ;
 	}
@@ -818,7 +962,7 @@ ExitFor :
 void TestProcess (int *x , int *y , int *InputCount ,
 		  int *CorrectInputCount , char *str , int *Page )
 {
-	UserInput (x , y , InputCount , CorrectInputCount , str ) ;
+	UserInput (x , y , InputCount , CorrectInputCount , str );
 
 	CheckCursorPosition (x , y , CorrectInputCount , str , Page) ;
 }
@@ -887,7 +1031,7 @@ while ( !kbhit() )
 	else
 	{
 		//if the user typed correcly
-		if ( InputLetter == str [ *CorrectInputCount ] )
+		if ( InputLetter == str[ *CorrectInputCount ] )
 		{
 			OutputLetter (x , InputCount ,
 					 InputLetter , CorrectInputCount) ;
@@ -1016,11 +1160,6 @@ void Report (int *InputCount , int *CorrectInputCount)
 	printf ( "Press ESC key to exit") ;
     Accr=Accuracy;
     Wpm=Speed;
-	strcpy(name,USERNAME);
-    strcat(name,fname);
-    uptr=fopen(name,"w");
-    fprintf(uptr,"%f\n%f",Accr,Wpm);
-    fclose(uptr);
 	//wait until the user press ESC
 	while (    tolower(getch ())  != ESC  ) {}
 }
@@ -1095,12 +1234,15 @@ void PrintLetter_cal(){
 	printf ("%c" , RequiredLetter) ;
 	TimeStart = clock () ;
 }
-void Basics(){
+void Basics_letters(){
       int CorrectInputCount = 0 , InputCount = 0 ;
 
 	TimeUsed = 0 ;
 
-	TrainInitial() ;
+	clrscr () ;
+	ExitTrainUserInputWord = FALSE ;
+	ExitTrainProcess = FALSE ;
+    TrainLetter () ;
 
 	//Once the user pressed ESC , it will end TrainProcess
 	while (ExitTrainProcess == FALSE)
@@ -1112,41 +1254,23 @@ void Basics(){
 	TrainCheckIfTyped ( &CorrectInputCount , &InputCount ) ;
 }
 
-void TrainInitial ()
-{
+void Basics_words(){
+      int CorrectInputCount = 0 , InputCount = 0 ;
 
-	char ch ;
-	clrscr () ;
+	TimeUsed = 0 ;
+    clrscr () ;
 	ExitTrainUserInputWord = FALSE ;
 	ExitTrainProcess = FALSE ;
+    TrainWord() ;
 
-	gotoxy (28 , 12) ;
-	printf ("1. Do you want to train single letters.") ;
-	gotoxy (28 , 14) ;
-	printf ("2. Do you want to train With words.");
-	gotoxy (28 , 16) ;
-	printf ("Please press either 1 , 2 or ESC : ") ;
-	while (   (ch = getch ())   !=   '1'  &&   ch   !=   '2'
-			&&	ch   !=   ESC  )
-	{}
-
-	if (ch == ESC)
+	//Once the user pressed ESC , it will end TrainProcess
+	while (ExitTrainProcess == FALSE)
 	{
-		ExitTrainProcess = TRUE ;
+		TrainProcess ( &CorrectInputCount , &InputCount) ;
 	}
-	else
-	{
-		if (ch == '1')
-		{
-			TrainLetter () ;
-		}
-		else
-		{
-			TrainWord () ;
-		}
-	}
+	//Check if the user typed in train mode
+	TrainCheckIfTyped ( &CorrectInputCount , &InputCount ) ;
 }
-
 void TrainLetter ()
 {
 	char ch ;
@@ -1389,8 +1513,12 @@ void TrainUserInput (char InputLetter , int *CorrectInputCount , int *InputCount
 {
 	gotoxy (40 , 13) ;
 
-	InputLetter = getch () ; //wait for the user to input choice
-
+	InputLetter = getch () ;//wait for the user to input choice
+	putchar(InputLetter);
+	gotoxy (30 , 23) ;
+	printf("Press Any Key to continue");
+	 gotoxy (40 , 13) ;
+    getch ();
 	if (InputLetter == ESC)  //Pressed ESC key
 	{
 		EndTrainMode () ;
@@ -1626,22 +1754,26 @@ void TrainReport (int *CorrectInputCount , int *InputCount)
 	printf ( "Speed           : %10.2f wpm (words per minute)" , Speed) ;
     Accr=Accuracy;
     Wpm=Speed;
-	strcpy(name,USERNAME);
-    strcat(name,fname);
-    uptr=fopen(name,"w");
-    fprintf(uptr,"%f\n%f",Accr,Wpm);
-    fclose(uptr);
 	gotoxy ( 20 , 25 ) ;
 
 	printf ( "Press any key (except ESC) to exit") ; //wait for the user to press
 
 	while ( getch () == ESC ) {}		//any key to exit
 }
+void userfinaldetails(float avg,char *level){
+    char name[50];
+    FILE *uptr;
+    strcpy(name,USERNAME);
+    strcat(name,fname);
+    uptr=fopen(name,"w");
+    fprintf(uptr,"%s%f",level,avg);
+    fclose(uptr);
+}
 void LeaderBoard(){
   FILE *ptr;
    struct usercmp t;
-    int k=0,i=0,z=0,f=0,m=0,j;
-    char temp[50];
+    int k=0,i=0,z=0,m=0,j=0;
+    char temp[50],detail[50];
     char ch;
 	char name[100];
 	float acc[50],speed[50];
@@ -1667,9 +1799,6 @@ void LeaderBoard(){
         }
        fclose(ptr);
        }
-       else{
-        //printf("file not exist!");
-       }
        i=0;
        //converting userdata into integer from their file and taking their average
        while(i<=k){
@@ -1677,52 +1806,68 @@ void LeaderBoard(){
         strcat(name,fname);
         ptr=fopen(name,"r");
        if(ptr!=NULL){
-            while ((ch = fgetc(ptr) )!= EOF)
-        {
-            if(ch=='\n'){
-                n=atof(temp);
-                acc[f]=n;
-                z=0;
-               f++;
-            }
-            else{
-                temp[z]=ch;
-                z++;
-            }
+           fgets(detail,sizeof(detail),ptr);
+            z=atoi(detail);
+            p[i].level=z;
+            fgets(detail,sizeof(detail),ptr);
+            z=atoi(detail);
+            p[i].avg=z;
+             fclose(ptr);
         }
-          z=0;
-        n=atof(temp);
-         speed[m]=n;
-         m++;
-
-       fclose(ptr);
-       }
        else{
-       // printf("file not exist!");
+      //  printf("file not exist!");
        }
       i++;
     }
     i=0;
-    while(i<3){
-        p[i].avg=(acc[i]+speed[i])/2;
-        i++;
-    }
     //sorting them based on user average value
-    for (i = 1; i <k; i++)
-      for (j = 0; j < k- i; j++) {
-         if (p[j].avg>p[j+1].avg) {
-            t= p[i];
-            p[i]= p[j + 1];
-            p[j + 1] = t;
-         }
-      }
+   for(i=0;i<=k;i++)
+    {
+        for(j=i+1;j<=k;j++)
+        {
+            if(p[i].level>p[j].level)
+            {
+                strcpy(t.str,p[i].str);
+                t.level=p[i].level;
+                t.avg=p[i].avg;
+
+                strcpy(p[i].str,p[j].str);
+                p[i].level=p[j].level;
+                p[i].avg=p[j].avg;
+
+                strcpy(p[j].str,t.str);
+                p[j].level=t.level;
+                p[j].avg=t.avg;
+            }
+            else if(p[i].level==p[j].level)
+            {
+                    if(p[i].avg>p[j].avg)
+                    {
+                        strcpy(t.str,p[i].str);
+                        t.level=p[i].level;
+                        t.avg=p[i].avg;
+
+                        strcpy(p[i].str,p[j].str);
+                        p[i].level=p[j].level;
+                        p[i].avg=p[j].avg;
+
+                        strcpy(p[j].str,t.str);
+                        p[j].level=t.level;
+                        p[j].avg=t.avg;
+                    }
+
+            }
+        }
+    }
     gotoxy (30 , 9) ;
     m=10;
     //displaying them in descending order
-    for( i=0; i<k;i++){
-        printf("%d : %s \n",i+1,p[i].str);
+    j=0;
+    for( i=k; i>0;i--){
+        printf("%d : %s  level:%d   wpm:%f",j+1,p[i].str,p[i].level,p[i].avg);
         gotoxy (30 , m) ;
         m++;
+        j++;
     }
     gotoxy(30,20);
     printf("press any key to exit\n");
@@ -1737,7 +1882,7 @@ void Game(){
     clrscr () ;
     GAMEMODE=1;
 	textcolor(WHITE);	//change the text and background colour
-	textbackground(BLUE);
+	textbackground(RED);
 	gotoxy(30,3);
 	printf("hi,%s lets start an interesting game!!",USERNAME);
 	gotoxy(20,4);
@@ -1803,9 +1948,4 @@ void QuitConfirm ()
 void EndBody()
 {
 	ExitProgram = TRUE ;
-}
-
-void EndProgram ()
-{
-
 }
